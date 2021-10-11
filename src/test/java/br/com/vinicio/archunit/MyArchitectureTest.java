@@ -7,6 +7,7 @@ import com.tngtech.archunit.library.Architectures;
 import org.junit.jupiter.api.Test;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 
 
@@ -32,6 +33,15 @@ public class MyArchitectureTest {
     }
 
     @Test
+    public void should_classes_must_not_be_suffixed_with_DTO() {
+        JavaClasses importedClasses = new ClassFileImporter().importPackages("br.com.vinicio.archunit");
+        ArchRule myRule = noClasses()
+                .should().haveSimpleNameEndingWith("Dto")
+                        .orShould().haveSimpleNameEndingWith("DTO");
+        myRule.check(importedClasses);
+    }
+
+    @Test
     public void should_not_violate_layers() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("br.com.vinicio.archunit");
 
@@ -47,4 +57,5 @@ public class MyArchitectureTest {
         arch.check(importedClasses);
 
     }
+
 }
